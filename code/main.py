@@ -1,7 +1,6 @@
 from settings import * 
 from sprites import *
 from groups import AllSprites
-from player import Player
 
 class Game:
     def __init__(self):
@@ -15,19 +14,19 @@ class Game:
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
 
-        # setup
+        # load game
         self.setup()
 
     def setup(self):
-        map = load_pygame(join('data', 'maps', 'world.tmx'))
+        tmx_map = load_pygame(join('data', 'maps', 'world.tmx'))
 
-        for x, y, image in map.get_layer_by_name('Main').tiles():
-            CollisionSprite((x * TILE_SIZE, y * TILE_SIZE), image, (self.collision_sprites, self.all_sprites))
+        for x, y, image in tmx_map.get_layer_by_name('Main').tiles():
+            Sprite((x * TILE_SIZE,y * TILE_SIZE), image, (self.all_sprites, self.collision_sprites))
 
-        for x, y, image in map.get_layer_by_name('Decoration').tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE), image, self.all_sprites)
+        for x, y, image in tmx_map.get_layer_by_name('Decoration').tiles():
+            Sprite((x * TILE_SIZE,y * TILE_SIZE), image, self.all_sprites)
 
-        for obj in map.get_layer_by_name('Entities'):
+        for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player':
                 self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites)
 
