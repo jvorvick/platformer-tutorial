@@ -24,7 +24,6 @@ class Player(Sprite):
         self.direction.x = int(keys[pygame.K_RIGHT]) - int(keys[pygame.K_LEFT])
         if keys[pygame.K_SPACE] and self.on_floor:
             self.direction.y = -20
-            self.on_floor = False
 
     def move(self, dt):
         # horizontal
@@ -46,9 +45,13 @@ class Player(Sprite):
                     if self.direction.y > 0: 
                         self.rect.bottom = sprite.rect.top
                         self.direction.y = 0
-                        self.on_floor = True
                     if self.direction.y < 0: self.rect.top = sprite.rect.bottom
 
+    def check_floor(self):
+        bottom_rect = pygame.FRect((0,0), (self.rect.width, 2)).move_to(midtop = self.rect.midbottom)
+        self.on_floor = True if bottom_rect.collidelist([sprite.rect for sprite in self.collision_sprites]) >= 0 else False
+
     def update(self, dt):
+        self.check_floor()
         self.input()
         self.move(dt)
