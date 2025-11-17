@@ -15,6 +15,9 @@ class AnimatedSprite(Sprite):
     def animate(self, dt):
         self.frame_index += self.animation_speed * dt
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
+    
+    def update(self, dt):
+        self.animate(dt)
 
 class Player(AnimatedSprite):
     def __init__(self, pos, groups, collision_sprites, frames):
@@ -75,3 +78,11 @@ class Player(AnimatedSprite):
         self.input()
         self.move(dt)
         self.animate(dt)
+
+class Bee(AnimatedSprite):
+    def __init__(self, pos, groups, frames):
+        super().__init__(frames, pos, groups)
+
+class Worm(AnimatedSprite):
+    def __init__(self, pos, groups, frames):
+        super().__init__(frames, pos, groups)
