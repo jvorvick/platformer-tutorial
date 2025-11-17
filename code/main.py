@@ -2,6 +2,7 @@ from settings import *
 from sprites import *
 from groups import AllSprites
 from support import *
+from timer import Timer
 
 class Game:
     def __init__(self):
@@ -18,6 +19,13 @@ class Game:
         # load game
         self.load_assets()
         self.setup()
+
+        # timers
+        self.bee_timer = Timer(2000, func = self.create_bee)
+        self.bee_timer.activate()
+
+    def create_bee(self):
+        Bee(self.bee_frames, (500,600), self.all_sprites)
 
     def load_assets(self):
         # graphics
@@ -43,7 +51,6 @@ class Game:
             if obj.name == 'Player':
                 self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites, self.player_frames)
 
-        Bee(self.bee_frames, (500,600), self.all_sprites)
         Worm(self.worm_frames, (700,600), self.all_sprites)
 
     def run(self):
@@ -55,6 +62,7 @@ class Game:
                     self.running = False 
             
             # update
+            self.bee_timer.update()
             self.all_sprites.update(dt)
 
             # draw 
