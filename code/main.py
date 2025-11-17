@@ -28,7 +28,9 @@ class Game:
         self.worm_frames = import_folder('images', 'enemies', 'worm')
 
         # sounds
-        
+        self.bgm = import_audio('audio', 'music')
+        self.shoot = import_audio('audio', 'shoot')
+        self.impact = import_audio('audio', 'impact', format='ogg')
 
     def setup(self):
         tmx_map = load_pygame(join('data', 'maps', 'world.tmx'))

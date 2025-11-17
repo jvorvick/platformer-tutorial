@@ -11,3 +11,7 @@ def import_folder(*path):
             full_path = join(folder_path, file_name)
             frames.append(pygame.image.load(full_path).convert_alpha())
     return frames
+
+def import_audio(*path, format = 'wav'):
+    full_path = join(*path) + f'.{format}'
+    return pygame.mixer.Sound(full_path)
