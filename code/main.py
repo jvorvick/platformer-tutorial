@@ -21,11 +21,11 @@ class Game:
         self.setup()
 
         # timers
-        self.bee_timer = Timer(2000, func = self.create_bee)
+        self.bee_timer = Timer(2000, func = self.create_bee, repeat = True)
         self.bee_timer.activate()
 
     def create_bee(self):
-        Bee(self.bee_frames, (500,600), self.all_sprites)
+        print(Bee(self.bee_frames, (500,600), self.all_sprites))
 
     def load_assets(self):
         # graphics
@@ -63,6 +63,7 @@ class Game:
             
             # update
             self.bee_timer.update()
+            # break
             self.all_sprites.update(dt)
 
             # draw 
