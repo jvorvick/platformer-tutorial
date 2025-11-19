@@ -21,8 +21,7 @@ class Game:
         self.setup()
 
         # timers
-        self.bee_timer = Timer(2000, func = self.create_bee, repeat = True)
-        self.bee_timer.activate()
+        self.bee_timer = Timer(2000, func = self.create_bee, repeat = True, autostart = True)
 
     def create_bee(self):
         print(Bee(self.bee_frames, (500,600), self.all_sprites))

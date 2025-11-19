@@ -6,9 +6,8 @@ class Timer:
         self.start_time = 0
         self.active = False
         self.func = func
-
         self.repeat = repeat
-        self.autostart = autostart
+        self.activate() if autostart else None
 
     def activate(self):
         self.active = True
