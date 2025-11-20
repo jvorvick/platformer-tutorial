@@ -8,6 +8,44 @@ class Sprite(pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_frect(topleft = pos)
 
+class Bullet(Sprite):
+    def __init__(self, surf, pos, direction, groups):
+        super().__init__(pos, surf, groups)
+
+        # adjustment
+        self.image = pygame.transform.flip(self.image, direction == -1, False)
+
+        # movement
+        self.direction = direction
+        self.speed = 850
+
+    def update(self, dt):
+        self.rect.x += self.direction * self.speed * dt
+
+class Fire(Sprite):
+    def __init__(self, surf, pos, groups, player):
+        super().__init__(pos, surf, groups)
+        self.player = player
+        self.flip = player.flip
+        self.timer = Timer(100, autostart = True, func = self.kill)
+        self.y_offset = pygame.Vector2(0,8)
+
+        if self.player.flip:
+            self.rect.midright = self.player.rect.midleft + self.y_offset
+            self.image = pygame.transform.flip(self.image, True, False)
+        else:
+            self.rect.midleft = self.player.rect.midright + self.y_offset
+
+    def update(self, _):
+        self.timer.update()
+        if self.player.flip:
+            self.rect.midright = self.player.rect.midleft + self.y_offset
+        else:
+            self.rect.midleft = self.player.rect.midright + self.y_offset
+
+        if self.flip != self.player.flip:
+            self.kill()
+
 class AnimatedSprite(Sprite):
     def __init__(self, frames, pos, groups):
         self.frames, self.frame_index, self.animation_speed = frames, 0, 10
@@ -32,9 +70,10 @@ class Worm(AnimatedSprite):
         self.animate(dt)
 
 class Player(AnimatedSprite):
-    def __init__(self, pos, groups, collision_sprites, frames):
+    def __init__(self, pos, groups, collision_sprites, frames, create_bullet):
         super().__init__(frames, pos, groups)
         self.flip = False
+        self.create_bullet = create_bullet
 
         # movement & collision
         self.direction = pygame.Vector2()
@@ -44,7 +83,7 @@ class Player(AnimatedSprite):
         self.on_floor = False
 
         # timer
-        self.shoot_timer = Timer(1500)
+        self.shoot_timer = Timer(500)
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -53,7 +92,7 @@ class Player(AnimatedSprite):
             self.direction.y = -20
 
         if keys[pygame.K_s] and not self.shoot_timer:
-            print('shoot bullet')
+            self.create_bullet(self.rect.center, -1 if self.flip else 1)
             self.shoot_timer.activate()
 
     def move(self, dt):
