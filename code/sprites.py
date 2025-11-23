@@ -51,14 +51,17 @@ class AnimatedSprite(Sprite):
     def __init__(self, frames, pos, groups):
         self.frames, self.frame_index, self.animation_speed = frames, 0, 10
         super().__init__(pos, self.frames[self.frame_index], groups)
+        self.flip = False
 
     def animate(self, dt):
         self.frame_index += self.animation_speed * dt
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
+        self.image = pygame.transform.flip(self.image, self.flip, False)
 
 class Enemy(AnimatedSprite):
-    def __init__(self, frames, pos, groups):
+    def __init__(self, frames, pos, groups, speed):
         super().__init__(frames, pos, groups)
+        self.speed = speed
 
     def update(self, dt):
         self.move(dt)
@@ -67,8 +70,7 @@ class Enemy(AnimatedSprite):
 
 class Bee(Enemy):
     def __init__(self, frames, pos, groups, speed):
-        super().__init__(frames, pos, groups)
-        self.speed = speed
+        super().__init__(frames, pos, groups, speed)
         self.amplitude = randint(500,600)
         self.frequency = randint(300,600)
 
@@ -81,14 +83,21 @@ class Bee(Enemy):
             self.kill()
 
 class Worm(Enemy):
-    def __init__(self, frames, pos, groups):
-        super().__init__(frames, pos, groups)
+    def __init__(self, frames, pos, travel_width, groups, speed):
+        super().__init__(frames, pos, groups, speed)
+        self.direction = pygame.Vector2(1,0)
+        self.travel_width = travel_width
 
     def move(self, dt):
-        pass
+        self.rect.x += self.direction.x * self.speed * dt
 
     def constraint(self):
-        pass
+        if self.rect.right >= self.travel_width[1]:
+            self.direction.x = -1
+            self.flip = True
+        if self.rect.left <= self.travel_width[0]:
+            self.direction.x = 1
+            self.flip = False
 
 class Player(AnimatedSprite):
     def __init__(self, pos, groups, collision_sprites, frames, create_bullet):

@@ -30,6 +30,13 @@ class Game:
             pos = (self.level_width + WINDOW_WIDTH,randint(0,self.level_height)),
             groups = self.all_sprites, 
             speed = randint(300,500))
+        
+    def create_worm(self, pos, width):
+        Worm(frames = self.worm_frames, 
+             pos = (pos[0], pos[1] + (TILE_SIZE - self.worm_frames[0].get_height())),
+             travel_width = (pos[0], pos[0] + width),
+             groups = self.all_sprites,
+             speed = randint(50,100))
     
     def create_bullet(self, pos, direction):
         x = pos[0] + direction * 34 if direction == 1 else pos[0] + direction * 34 - self.bullet_surf.get_width()
@@ -61,8 +68,8 @@ class Game:
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player':
                 self.player = Player((obj.x, obj.y), self.all_sprites, self.collision_sprites, self.player_frames, self.create_bullet)
-
-        Worm(self.worm_frames, (700,600), self.all_sprites)
+            if obj.name == 'Worm':
+                self.create_worm((obj.x,obj.y), obj.width)
 
     def run(self):
         while self.running:
